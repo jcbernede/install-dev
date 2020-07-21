@@ -25,8 +25,13 @@ npx -p touch nodetouch src/js/main.js
 npx -p touch nodetouch src/sass/style.scss
 npx -p touch nodetouch src/sass/my-bts.scss
 
+
 # mise en place de bootstrap avec my-bts.scss et import dans style.scss
 echo "@import "my-bts.scss";" > src/sass/style.scss
+
+# copie des scripts nécéssaires à bootstrap
+cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js src/js/
+cp node_modules/bootstrap/dist/js/bootstrap.min.js src/js/
 
 #liaison avec bootstrap dans my-bts.scss
 cat > src/sass/my-bts.scss << eof
@@ -81,7 +86,7 @@ eof
 #############
 
 #initialisation des plugins
-cat > src/sass/gulpfile.js << eof
+cat > gulpfile.js << eof
 const { src, dest, parallel, series, watch } = require("gulp");
 const sass = require("gulp-sass");
 const useref = require("gulp-useref");
@@ -91,11 +96,10 @@ const responsive = require("gulp-responsive");
 const log = require("fancy-log");
 const critical = require("critical").stream;
 const cachebust = require("gulp-cache-bust");
-
 eof
 
 # Variables des path
-cat >> src/sass/gulpfile.js << eof
+cat >> gulpfile.js << eof
 // file path  variables
 const files = {
   scssPath: "./src/sass/*.scss",
@@ -107,11 +111,10 @@ const files = {
   dist: "./dist/",
   distFile: "./dist/*.html",
 };
-
 eof
 
 # cacheBust
-cat >> src/sass/gulpfile.js << eof
+cat >> gulpfile.js << eof
 /*******************************
  * cacheBust task
  * Add timestamp version to css
@@ -121,11 +124,10 @@ function cacheBust() {
     .pipe(cachebust({ type: "timestamp" }))
     .pipe(dest(files.dist));
 }
-
 eof
 
 # Critical task
-cat >> src/sass/gulpfile.js << eof
+cat >> gulpfile.js << eof
 /****************
  * Critical task
  * Inline critical-path css and load the existing stylesheets asynchronously
@@ -144,31 +146,27 @@ function criticalTask() {
     })
     .pipe(dest("./dist"));
 }
-
 eof
 # JS Task
-cat >> src/sass/gulpfile.js << eof
+cat >> gulpfile.js << eof
 /*****************
  * JS Task
  * Parse build blocks in HTML files to replace references to non-optimized scripts or stylesheets with useref
  *  - I use it only for js
  *****************/
-
 function jsTask() {
   return src(files.htmlPath).pipe(useref()).pipe(dest(files.dist));
 }
-
 eof
 
 # sass Task
-cat >> src/sass/gulpfile.js << eof
+cat >> gulpfile.js << eof
 /******************
  * sass Task
  * - sass task with gulp-sass
  * - purgecss with gulp-purgecss
  * - minify with gulp-csso
  ******************/
-
 function sassTask() {
   return (
     src(files.scssFile)
@@ -182,15 +180,13 @@ function sassTask() {
       )
       //minify css
       .pipe(minifyCss())
-
       // What is the destination for the compiled file?
       .pipe(dest(files.dist + "/css"))
   );
 }
-
 eof
 # Watch task
-cat >> src/sass/gulpfile.js << eof
+cat >> gulpfile.js << eof
 /****************
  * Watch task
  * Default task to compile file on save to dist
@@ -202,11 +198,10 @@ function watchTask() {
     series(sassTask, jsTask, criticalTask, cacheBust)
   );
 }
-
 eof
 
 # Exports
-cat >> src/sass/gulpfile.js << eof
+cat >> gulpfile.js << eof
 exports.watch = watchTask;
 exports.js = jsTask;
 exports.sass = sassTask;
