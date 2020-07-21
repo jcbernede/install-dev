@@ -11,6 +11,7 @@ npm install gulp-purgecss -D
 npm install gulp-useref -D
 npm install critical -D
 npm install fancy-log -D
+npm install gulp-cache-bust -D
 
 #création des différents répertoires
 mkdir src
@@ -73,4 +74,143 @@ cat > src/sass/my-bts.scss << eof
 @import "../../node_modules/bootstrap/scss/spinners";
 @import "../../node_modules/bootstrap/scss/utilities";
 @import "../../node_modules/bootstrap/scss/print";
+eof
+
+#############
+# gulpfile.js
+#############
+
+#initialisation des plugins
+cat > src/sass/gulpfile.js << eof
+const { src, dest, parallel, series, watch } = require("gulp");
+const sass = require("gulp-sass");
+const useref = require("gulp-useref");
+const minifyCSS = require("gulp-csso");
+const purgecss = require("gulp-purgecss");
+const responsive = require("gulp-responsive");
+const log = require("fancy-log");
+const critical = require("critical").stream;
+const cachebust = require("gulp-cache-bust");
+
+eof
+
+# Variables des path
+cat >> src/sass/gulpfile.js << eof
+// file path  variables
+const files = {
+  scssPath: "./src/sass/*.scss",
+  jsPath: "./src/js/*.js",
+  imgPath: "./src/img/**/",
+  phpPath: "./src/**/*.php",
+  htmlPath: "./src/*.html",
+  distCssPath: "dist/css/*.css",
+  dist: "./dist/",
+  distFile: "./dist/*.html",
+};
+
+eof
+
+# cacheBust
+cat >> src/sass/gulpfile.js << eof
+/*******************************
+ * cacheBust task
+ * Add timestamp version to css
+ *******************************/
+function cacheBust() {
+  return src(files.distFile)
+    .pipe(cachebust({ type: "timestamp" }))
+    .pipe(dest(files.dist));
+}
+
+eof
+
+# Critical task
+cat >> src/sass/gulpfile.js << eof
+/****************
+ * Critical task
+ * Inline critical-path css and load the existing stylesheets asynchronously
+ ****************/
+function criticalTask() {
+  return src(files.htmlPath)
+    .pipe(
+      critical({
+        base: files.dist,
+        inline: true,
+        css: "dist/css/style.css",
+      })
+    )
+    .on("error", (err) => {
+      log.error(err.message);
+    })
+    .pipe(dest("./dist"));
+}
+
+eof
+# JS Task
+cat >> src/sass/gulpfile.js << eof
+/*****************
+ * JS Task
+ * Parse build blocks in HTML files to replace references to non-optimized scripts or stylesheets with useref
+ *  - I use it only for js
+ *****************/
+
+function jsTask() {
+  return src(files.htmlPath).pipe(useref()).pipe(dest(files.dist));
+}
+
+eof
+
+# sass Task
+cat >> src/sass/gulpfile.js << eof
+/******************
+ * sass Task
+ * - sass task with gulp-sass
+ * - purgecss with gulp-purgecss
+ * - minify with gulp-csso
+ ******************/
+
+function sassTask() {
+  return (
+    src(files.scssFile)
+      // Use sass with the files found, and log any errors
+      .pipe(sass())
+      .on("error", sass.logError)
+      .pipe(
+        purgecss({
+          content: [files.htmlPath, files.jsPath],
+        })
+      )
+      //minify css
+      .pipe(minifyCss())
+
+      // What is the destination for the compiled file?
+      .pipe(dest(files.dist + "/css"))
+  );
+}
+
+eof
+# Watch task
+cat >> src/sass/gulpfile.js << eof
+/****************
+ * Watch task
+ * Default task to compile file on save to dist
+ *  - jstask
+ ****************/
+function watchTask() {
+  watch(
+    [files.scssFile, files.jsPath, files.htmlPath],
+    series(sassTask, jsTask, criticalTask, cacheBust)
+  );
+}
+
+eof
+
+# Exports
+cat >> src/sass/gulpfile.js << eof
+exports.watch = watchTask;
+exports.js = jsTask;
+exports.sass = sassTask;
+exports.img = mImagesTask;
+exports.critical = criticalTask;
+exports.cache = cacheBust;
 eof
