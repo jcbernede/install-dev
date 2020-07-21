@@ -33,6 +33,7 @@ echo '@import "my-bts.scss";' > src/sass/style.scss
 # copie des scripts nécéssaires à bootstrap
 cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js src/js/
 cp node_modules/bootstrap/dist/js/bootstrap.min.js src/js/
+curl -o src/js/jquery-3.5.1.slim.min.js https://code.jquery.com/jquery-3.5.1.slim.min.js
 
 #liaison avec bootstrap dans my-bts.scss
 cat > src/sass/my-bts.scss << eof
@@ -228,7 +229,7 @@ cat > src/index.html << eof
   <body>
     <h1>It works !</h1>
     <!-- build:js js/main.js -->
-    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="jquery-3.5.1.slim.min.js"></script>  
     <script src="js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
     <!-- endbuild -->
