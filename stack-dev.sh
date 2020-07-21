@@ -9,6 +9,7 @@ npm install gulp-csso -D
 npm install bootstrap -D
 npm install gulp-purgecss -D
 npm install gulp-useref -D
+npm install gulp-responsive -D
 npm install critical -D
 npm install fancy-log -D
 npm install gulp-cache-bust -D
@@ -27,7 +28,7 @@ npx -p touch nodetouch src/sass/my-bts.scss
 
 
 # mise en place de bootstrap avec my-bts.scss et import dans style.scss
-echo "@import "my-bts.scss";" > src/sass/style.scss
+echo '@import "my-bts.scss";' > src/sass/style.scss
 
 # copie des scripts nécéssaires à bootstrap
 cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js src/js/
@@ -90,7 +91,7 @@ cat > gulpfile.js << eof
 const { src, dest, parallel, series, watch } = require("gulp");
 const sass = require("gulp-sass");
 const useref = require("gulp-useref");
-const minifyCSS = require("gulp-csso");
+const minifyCss = require("gulp-csso");
 const purgecss = require("gulp-purgecss");
 const responsive = require("gulp-responsive");
 const log = require("fancy-log");
@@ -103,6 +104,7 @@ cat >> gulpfile.js << eof
 // file path  variables
 const files = {
   scssPath: "./src/sass/*.scss",
+  scssFile: "./src/sass/style.scss",
   jsPath: "./src/js/*.js",
   imgPath: "./src/img/**/",
   phpPath: "./src/**/*.php",
