@@ -209,3 +209,27 @@ exports.img = mImagesTask;
 exports.critical = criticalTask;
 exports.cache = cacheBust;
 eof
+
+#############
+# index.html
+#############
+
+cat > src/index.html << eof
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>It works !</h1>
+    <!-- build:js js/main.js -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+    <!-- endbuild -->
+  </body>
+</html>
+eof
