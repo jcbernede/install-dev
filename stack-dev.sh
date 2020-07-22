@@ -208,7 +208,6 @@ cat >> gulpfile.js << eof
 exports.watch = watchTask;
 exports.js = jsTask;
 exports.sass = sassTask;
-exports.img = mImagesTask;
 exports.critical = criticalTask;
 exports.cache = cacheBust;
 eof
