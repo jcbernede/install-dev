@@ -228,7 +228,8 @@ cat > src/index.html << eof
   <body>
     <h1>It works !</h1>
     <!-- build:js js/main.js -->
-    <script src="jquery-3.5.1.slim.min.js"></script>  
+    <script src="js/jquery-3.5.1.slim.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
     <!-- endbuild -->
