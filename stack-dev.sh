@@ -20,15 +20,23 @@ mkdir src/js
 mkdir src/sass
 mkdir src/img
 
-#création des fichiers nécéssaires
+#création des fichiers nécéssaires et media queries
 npx -p touch nodetouch gulpfile.js
 npx -p touch nodetouch src/js/main.js
 npx -p touch nodetouch src/sass/style.scss
 npx -p touch nodetouch src/sass/my-bts.scss
+npx -p touch nodetouch src/sass/_1200px.scss
+npx -p touch nodetouch src/sass/_992px.scss
+npx -p touch nodetouch src/sass/_768px.scss
+npx -p touch nodetouch src/sass/_480px.scss
 
 
-# mise en place de bootstrap avec my-bts.scss et import dans style.scss
+# mise en place de bootstrap avec my-bts.scss + media queries et import dans style.scss
 echo '@import "my-bts.scss";' > src/sass/style.scss
+echo '@import "my-bts.scss";' > src/sass/_1200px.scss
+echo '@import "my-bts.scss";' > src/sass/_992px.scss
+echo '@import "my-bts.scss";' > src/sass/_768px.scss
+echo '@import "my-bts.scss";' > src/sass/_480px.scss
 
 # copie des scripts nécéssaires à bootstrap
 cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js src/js/
